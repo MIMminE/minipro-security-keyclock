@@ -28,4 +28,6 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Init docker keyclock
-        run: ./docker-init.bash
+        run: |
+          chmod +x ./docker-init.bash
+          ./docker-init.bash
