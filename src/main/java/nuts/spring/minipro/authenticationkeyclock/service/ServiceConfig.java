@@ -8,6 +8,8 @@ import nuts.spring.minipro.authenticationkeyclock.usecase.delete.DefaultDeleteRe
 import nuts.spring.minipro.authenticationkeyclock.usecase.delete.DeleteResourceUseCase;
 import nuts.spring.minipro.authenticationkeyclock.usecase.get.DefaultGetResourceUseCase;
 import nuts.spring.minipro.authenticationkeyclock.usecase.get.GetResourceUseCase;
+import nuts.spring.minipro.authenticationkeyclock.usecase.token.RequestTokenUseCase;
+import nuts.spring.minipro.authenticationkeyclock.usecase.token.RequestTokenUseCaseImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,22 +17,27 @@ import org.springframework.context.annotation.Configuration;
 public class ServiceConfig {
 
     @Bean
-    AuthenticationServerPort authenticationServerPort(){
+    AuthenticationServerPort authenticationServerPort() {
         return new AuthenticationServerAdapter();
     }
 
     @Bean
-    CreateResourceUseCase createResourceUseCase(){
+    RequestTokenUseCase requestTokenUseCase() {
+        return new RequestTokenUseCaseImpl(authenticationServerPort());
+    }
+
+    @Bean
+    CreateResourceUseCase createResourceUseCase() {
         return new DefaultCreateResourceUseCase();
     }
 
     @Bean
-    DeleteResourceUseCase deleteResourceUseCase(){
+    DeleteResourceUseCase deleteResourceUseCase() {
         return new DefaultDeleteResourceUseCase();
     }
 
     @Bean
-    GetResourceUseCase getResourceUseCase(){
+    GetResourceUseCase getResourceUseCase() {
         return new DefaultGetResourceUseCase();
     }
 }

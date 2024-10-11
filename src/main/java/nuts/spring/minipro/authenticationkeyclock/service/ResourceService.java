@@ -9,6 +9,7 @@ import nuts.spring.minipro.authenticationkeyclock.repository.ResourceType;
 import nuts.spring.minipro.authenticationkeyclock.usecase.create.CreateResourceUseCase;
 import nuts.spring.minipro.authenticationkeyclock.usecase.delete.DeleteResourceUseCase;
 import nuts.spring.minipro.authenticationkeyclock.usecase.get.GetResourceUseCase;
+import nuts.spring.minipro.authenticationkeyclock.usecase.token.RequestTokenUseCase;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +19,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ResourceService {
 
+
     private final ResourceRepository resourceRepository;
+
+    private final RequestTokenUseCase requestTokenUseCase;
     private final GetResourceUseCase getResourceUseCase;
     private final CreateResourceUseCase createResourceUseCase;
     private final DeleteResourceUseCase deleteResourceUseCase;

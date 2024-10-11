@@ -1,12 +1,11 @@
 package nuts.spring.minipro.authenticationkeyclock.port;
 
-import jakarta.annotation.PostConstruct;
-
-import java.util.Map;
+import org.keycloak.representations.AccessTokenResponse;
+import org.keycloak.representations.idm.authorization.AuthorizationResponse;
 
 public interface AuthenticationServerPort {
 
-    void loadJWKSet();
+    AccessTokenResponse requestToken(String username, String password);
 
-    Map<String, Object> validationResult(String token);
+    AuthorizationResponse validationToken(String token);
 }
