@@ -5,11 +5,12 @@ import org.keycloak.authorization.client.AuthorizationDeniedException;
 import org.keycloak.authorization.client.AuthzClient;
 import org.keycloak.authorization.client.Configuration;
 import org.keycloak.authorization.client.representation.TokenIntrospectionResponse;
+import org.keycloak.authorization.client.resource.AuthorizationResource;
+import org.keycloak.authorization.client.resource.PermissionResource;
 import org.keycloak.authorization.client.resource.ProtectedResource;
+import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.AccessTokenResponse;
-import org.keycloak.representations.idm.authorization.AuthorizationRequest;
-import org.keycloak.representations.idm.authorization.AuthorizationResponse;
-import org.keycloak.representations.idm.authorization.Permission;
+import org.keycloak.representations.idm.authorization.*;
 
 import java.util.List;
 import java.util.Map;
@@ -20,27 +21,37 @@ public class AuthenticationServerAdapter implements AuthenticationServerPort {
 
     @Override
     public AccessTokenResponse requestToken(String username, String password) {
-        return authzClient.obtainAccessToken(username, password);
+
+        AuthorizationRequest request = new AuthorizationRequest();
+//        request.addPermission("Default Resource");
+//        request.addPermission("All Resource");
+        AuthorizationResponse authorize = authzClient.authorization(username, password).authorize(request);
+
+        return authzClient.authorization(username, password).authorize(request);
     }
 
     @Override
     public AuthorizationResponse validationToken(String token) {
+
+        AuthorizationResource authorizationResource = authzClient.authorization(token);
+
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest();
+        authorizationRequest.addPermission("ResourceA");
+        AuthorizationResponse authResponse = authorizationResource.authorize(authorizationRequest);
+        String authToken = authResponse.getToken();
+
+        System.out.println(authToken);
+
+        TokenIntrospectionResponse tokenIntrospectionResponse = authzClient.protection().introspectRequestingPartyToken(authToken);
+        String[] all = authzClient.protection().resource().findAll();
+        List<Permission> permissions = tokenIntrospectionResponse.getPermissions();
+        for (Permission per : permissions) {
+            per.getClaims();
+        }
+
         try {
-
-            List<Permission> permissions1 = authzClient.authorization(token).getPermissions(new AuthorizationRequest());
-
-
-
-            ProtectedResource resource = authzClient.protection().resource();
-
-
-            TokenIntrospectionResponse tokenIntrospectionResponse = authzClient.protection().introspectRequestingPartyToken(token);
-
-            List<Permission> permissions = tokenIntrospectionResponse.getPermissions();
-            for (Permission permission : permissions) {
-                System.out.println(permission);
-            }
-
+            authorizationRequest.addPermission("ResourceA");
+            AuthorizationResponse authorize = authzClient.authorization(token).authorize(authorizationRequest);
             return authzClient.authorization(token).authorize();
         } catch (RuntimeException e) {
             System.out.println("인증 실패 ! ");
